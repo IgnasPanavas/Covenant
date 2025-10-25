@@ -20,6 +20,11 @@ export function MyCommitments() {
   const { address, isConnected } = useAccount()
   const [commitments, setCommitments] = useState<Commitment[]>([])
   const [proofFile, setProofFile] = useState<File | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const { data: commitmentIds } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -68,6 +73,17 @@ export function MyCommitments() {
     // For now, we'll just show a placeholder
     console.log('Uploading proof for commitment:', commitmentId)
     console.log('File:', proofFile.name)
+  }
+
+  if (!mounted) {
+    return (
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Your Commitments</h2>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </section>
+    )
   }
 
   if (!isConnected) {

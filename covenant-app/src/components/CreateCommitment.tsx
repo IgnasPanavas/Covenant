@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAccount, useWriteContract } from 'wagmi'
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract'
 
@@ -10,8 +10,13 @@ export function CreateCommitment() {
   const [deadline, setDeadline] = useState('')
   const [beneficiary, setBeneficiary] = useState('')
   const [stakeAmount, setStakeAmount] = useState('')
+  const [mounted, setMounted] = useState(false)
 
   const { writeContract, isPending } = useWriteContract()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,6 +29,17 @@ export function CreateCommitment() {
         value: BigInt(Math.floor(parseFloat(stakeAmount) * 1e18))
       })
     }
+  }
+
+  if (!mounted) {
+    return (
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Create Your Commitment</h2>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </section>
+    )
   }
 
   if (!isConnected) {
