@@ -2,42 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useAccount, useReadContract } from 'wagmi'
-import { Clock, CheckCircle, XCircle, Upload, Eye } from 'lucide-react'
-
-// This would be your deployed contract address
-const CONTRACT_ADDRESS = '0x...' // Replace with actual deployed contract
-
-const CONTRACT_ABI = [
-  {
-    "inputs": [{"name": "_user", "type": "address"}],
-    "name": "getUserCommitments",
-    "outputs": [{"name": "", "type": "uint256[]"}],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{"name": "_commitmentId", "type": "uint256"}],
-    "name": "getCommitment",
-    "outputs": [
-      {
-        "name": "",
-        "type": "tuple",
-        "components": [
-          {"name": "user", "type": "address"},
-          {"name": "amount", "type": "uint256"},
-          {"name": "taskDescription", "type": "string"},
-          {"name": "deadline", "type": "uint256"},
-          {"name": "proofHash", "type": "string"},
-          {"name": "isCompleted", "type": "bool"},
-          {"name": "isVerified", "type": "bool"},
-          {"name": "beneficiary", "type": "address"}
-        ]
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  }
-]
+import { Clock, CheckCircle, XCircle, Upload } from 'lucide-react'
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract'
 
 interface Commitment {
   user: string
@@ -53,11 +19,10 @@ interface Commitment {
 export function MyCommitments() {
   const { address, isConnected } = useAccount()
   const [commitments, setCommitments] = useState<Commitment[]>([])
-  const [selectedCommitment, setSelectedCommitment] = useState<number | null>(null)
   const [proofFile, setProofFile] = useState<File | null>(null)
 
   const { data: commitmentIds } = useReadContract({
-    address: CONTRACT_ADDRESS as `0x${string}`,
+    address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
     functionName: 'getUserCommitments',
     args: [address],

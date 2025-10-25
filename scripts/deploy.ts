@@ -17,11 +17,11 @@ async function main() {
   };
   
   fs.writeFileSync(
-    '../src/lib/contract.json', 
+    './contract-info.json', 
     JSON.stringify(contractInfo, null, 2)
   );
   
-  console.log("Contract info saved to src/lib/contract.json");
+  console.log("Contract info saved to contract-info.json");
 }
 
 main()

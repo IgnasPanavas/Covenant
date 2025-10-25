@@ -47,7 +47,7 @@ contract AccountabilityContract is ReentrancyGuard, Ownable {
         uint256 amount
     );
 
-    constructor() Ownable(msg.sender) {}
+    constructor() {}
 
     function createCommitment(
         string memory _taskDescription,

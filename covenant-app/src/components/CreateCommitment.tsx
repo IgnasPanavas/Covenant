@@ -2,24 +2,7 @@
 
 import { useState } from 'react'
 import { useAccount, useWriteContract } from 'wagmi'
-import { Plus, Calendar, DollarSign, User } from 'lucide-react'
-
-// This would be your deployed contract address
-const CONTRACT_ADDRESS = '0x...' // Replace with actual deployed contract
-
-const CONTRACT_ABI = [
-  {
-    "inputs": [
-      {"name": "_taskDescription", "type": "string"},
-      {"name": "_deadline", "type": "uint256"},
-      {"name": "_beneficiary", "type": "address"}
-    ],
-    "name": "createCommitment",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  }
-]
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract'
 
 export function CreateCommitment() {
   const { address, isConnected } = useAccount()
@@ -32,8 +15,14 @@ export function CreateCommitment() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (write) {
-      write()
+    if (taskDescription && deadline && beneficiary && stakeAmount) {
+      writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: 'createCommitment',
+        args: [taskDescription, Math.floor(new Date(deadline).getTime() / 1000), beneficiary as `0x${string}`],
+        value: BigInt(Math.floor(parseFloat(stakeAmount) * 1e18))
+      })
     }
   }
 
@@ -118,10 +107,10 @@ export function CreateCommitment() {
 
           <button
             type="submit"
-            disabled={isLoading || !write}
+            disabled={isPending || !taskDescription || !deadline || !beneficiary || !stakeAmount}
             className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Creating Commitment...' : 'Create Commitment'}
+            {isPending ? 'Creating Commitment...' : 'Create Commitment'}
           </button>
         </form>
       </div>

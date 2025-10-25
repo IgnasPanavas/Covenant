@@ -1,9 +1,15 @@
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images: {
-    domains: ['localhost', 'ipfs.io', 'gateway.pinata.cloud'],
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    }
+    return config
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;
