@@ -4,6 +4,15 @@ const REKA_BASE_URL = process.env.REKA_BASE_URL!;
 const REKA_API_KEY = process.env.REKA_API_KEY!;
 
 export async function POST(request: NextRequest) {
+    // Check if environment variables are set
+    if (!REKA_BASE_URL || !REKA_API_KEY) {
+        console.error('Missing environment variables:', { REKA_BASE_URL: !!REKA_BASE_URL, REKA_API_KEY: !!REKA_API_KEY });
+        return NextResponse.json(
+            { error: 'Server configuration error: Missing Reka API credentials' },
+            { status: 500 }
+        );
+    }
+
     const url = `${REKA_BASE_URL}/videos/upload`;
 
     try {

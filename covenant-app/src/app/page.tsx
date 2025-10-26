@@ -4,6 +4,7 @@ import { HowItWorks } from '@/components/HowItWorks'
 import { CreateCommitment } from '@/components/CreateCommitment'
 import { MyCommitments } from '@/components/MyCommitments'
 import { CommitmentTester } from '@/components/CommitmentTester'
+import { DebugConfig } from '@/components/DebugConfig'
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <CreateCommitment />
       <CommitmentTester />
       <MyCommitments />
+      <DebugConfig />
     </main>
   )
 }

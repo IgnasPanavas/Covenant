@@ -18,20 +18,25 @@ interface Commitment {
   token: string
   status: number // Add the actual status from contract (0: Active, 1: Completed, 2: Failed)
   aiVerified?: boolean
-  confidence?: number
-  reasoning?: string
+  userPresent?: boolean
+  comments?: string
+  videoId?: string
+  verificationInProgress?: boolean
+  signature?: string
+  timestamp?: number
 }
 
 export function MyCommitments() {
   const { address, isConnected } = useAccount()
   const [commitments, setCommitments] = useState<Commitment[]>([])
   const [mounted, setMounted] = useState(false)
+  const [proofFile, setProofFile] = useState<File | null>(null)
+  const [uploadingCommitmentId, setUploadingCommitmentId] = useState<number | null>(null)
+  const [verifyingCommitmentId, setVerifyingCommitmentId] = useState<number | null>(null)
 
   useEffect(() => {
     setMounted(true)
   }, [])
-  
-  const [proofFile, setProofFile] = useState<File | null>(null)
 
   const { data: commitmentIds, error: commitmentIdsError, isLoading: loadingIds } = useReadContract({
     address: CONTRACT_ADDRESS as `0x${string}`,
@@ -187,10 +192,115 @@ export function MyCommitments() {
   const handleProofUpload = async (commitmentId: number) => {
     if (!proofFile) return
 
-    // In a real app, you'd upload to IPFS here
-    // For now, we'll just show a placeholder
-    console.log('Uploading proof for commitment:', commitmentId)
-    console.log('File:', proofFile.name)
+    setUploadingCommitmentId(commitmentId)
+    try {
+      const formData = new FormData()
+      formData.append('file', proofFile)
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('Upload failed:', response.status, errorData)
+        throw new Error(`Upload failed: ${errorData.error || `HTTP ${response.status}`}`)
+      }
+
+      const uploadResult = await response.json()
+      console.log('Upload successful:', uploadResult)
+
+      // Update the commitment with the video ID
+      setCommitments(prev => prev.map(commitment => 
+        commitment.id === commitmentId 
+          ? { ...commitment, videoId: uploadResult.video_id }
+          : commitment
+      ))
+
+      // Automatically trigger verification after successful upload
+      if (uploadResult.video_id) {
+        await handleVerification(commitmentId, uploadResult.video_id)
+      }
+
+    } catch (error) {
+      console.error('Upload error:', error)
+      alert('Failed to upload video. Please try again.')
+    } finally {
+      setUploadingCommitmentId(null)
+      setProofFile(null)
+    }
+  }
+
+  const handleVerification = async (commitmentId: number, videoId?: string) => {
+    const commitment = commitments.find(c => c.id === commitmentId)
+    if (!commitment) return
+
+    const videoIdToUse = videoId || commitment.videoId
+    if (!videoIdToUse) {
+      alert('No video available for verification')
+      return
+    }
+
+    setVerifyingCommitmentId(commitmentId)
+    
+    // Update commitment to show verification in progress
+    setCommitments(prev => prev.map(c => 
+      c.id === commitmentId 
+        ? { ...c, verificationInProgress: true }
+        : c
+    ))
+
+    try {
+      const response = await fetch('/api/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          videoId: videoIdToUse,
+          commitmentDescription: commitment.taskDescription,
+          commitmentId: commitmentId,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('Verification failed:', response.status, errorData)
+        throw new Error(`Verification failed: ${errorData.error || `HTTP ${response.status}`}`)
+      }
+
+      const verificationResult = await response.json()
+      console.log('Verification result:', verificationResult)
+
+      // Update the commitment with verification results
+      setCommitments(prev => prev.map(c => 
+        c.id === commitmentId 
+          ? { 
+              ...c, 
+              aiVerified: verificationResult.verified,
+              userPresent: verificationResult.user_present,
+              comments: verificationResult.comments,
+              verificationInProgress: false,
+              signature: verificationResult.signature,
+              timestamp: verificationResult.timestamp
+            }
+          : c
+      ))
+
+    } catch (error) {
+      console.error('Verification error:', error)
+      alert('Failed to verify commitment. Please try again.')
+      
+      // Reset verification in progress state
+      setCommitments(prev => prev.map(c => 
+        c.id === commitmentId 
+          ? { ...c, verificationInProgress: false }
+          : c
+      ))
+    } finally {
+      setVerifyingCommitmentId(null)
+    }
   }
 
   if (!mounted) {
@@ -311,30 +421,52 @@ export function MyCommitments() {
                 </div>
 
                 {/* AI Verification Status */}
-                {commitment.aiVerified !== undefined && (
-                  <div className="mb-4 p-3 bg-earth-green-50 rounded-lg border border-earth-green-200">
+                {(commitment.aiVerified !== undefined || commitment.verificationInProgress) && (
+                  <div className={`mb-4 p-3 rounded-lg border ${
+                    commitment.verificationInProgress 
+                      ? 'bg-yellow-50 border-yellow-200'
+                      : commitment.aiVerified 
+                        ? 'bg-earth-green-50 border-earth-green-200'
+                        : 'bg-red-50 border-red-200'
+                  }`}>
                     <div className="flex items-start gap-2">
-                      <Brain className="h-4 w-4 text-earth-green-700 mt-0.5" />
+                      <Brain className={`h-4 w-4 mt-0.5 ${
+                        commitment.verificationInProgress 
+                          ? 'text-yellow-700'
+                          : commitment.aiVerified 
+                            ? 'text-earth-green-700'
+                            : 'text-red-700'
+                      }`} />
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <p className="text-sm font-medium text-earth-green-900">
                             AI Verification
                           </p>
-                          <span className={`px-2 py-0.5 rounded text-xs ${
-                            commitment.aiVerified
-                              ? 'bg-earth-green-100 text-earth-green-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {commitment.aiVerified ? 'Verified' : 'Not Verified'}
-                          </span>
-                          {commitment.confidence !== undefined && (
-                            <span className="text-xs text-earth-text">
-                              (Confidence: {commitment.confidence}%)
+                          {commitment.verificationInProgress ? (
+                            <span className="px-2 py-0.5 rounded text-xs bg-yellow-100 text-yellow-800">
+                              Verifying...
+                            </span>
+                          ) : (
+                            <span className={`px-2 py-0.5 rounded text-xs ${
+                              commitment.aiVerified
+                                ? 'bg-earth-green-100 text-earth-green-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {commitment.aiVerified ? 'Verified' : 'Not Verified'}
+                            </span>
+                          )}
+                          {commitment.userPresent !== undefined && (
+                            <span className={`px-2 py-0.5 rounded text-xs ${
+                              commitment.userPresent
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {commitment.userPresent ? 'User Present' : 'User Not Present'}
                             </span>
                           )}
                         </div>
-                        {commitment.reasoning && (
-                          <p className="text-xs text-earth-text mt-1">{commitment.reasoning}</p>
+                        {commitment.comments && (
+                          <p className="text-xs text-earth-text mt-1">{commitment.comments}</p>
                         )}
                       </div>
                     </div>
@@ -348,6 +480,21 @@ export function MyCommitments() {
                     <p className="text-xs font-mono text-earth-text bg-earth-brown-50 p-2 rounded break-all">
                       {commitment.proofHash}
                     </p>
+                  </div>
+                )}
+
+                {/* Verification Signature */}
+                {commitment.signature && (
+                  <div className="mb-4">
+                    <p className="text-sm text-earth-text-light mb-1">Verification Signature</p>
+                    <p className="text-xs font-mono text-earth-text bg-earth-brown-50 p-2 rounded break-all">
+                      {commitment.signature}
+                    </p>
+                    {commitment.timestamp && (
+                      <p className="text-xs text-earth-text-light mt-1">
+                        Verified at: {new Date(commitment.timestamp * 1000).toLocaleString()}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -365,24 +512,47 @@ export function MyCommitments() {
                     <div className="flex space-x-2">
                       <input
                         type="file"
-                        accept="image/*,video/*"
+                        accept="video/*"
                         onChange={(e) => setProofFile(e.target.files?.[0] || null)}
                         className="hidden"
                         id={`proof-${commitment.id}`}
+                        disabled={uploadingCommitmentId === commitment.id || verifyingCommitmentId === commitment.id}
                       />
                       <label
                         htmlFor={`proof-${commitment.id}`}
-                        className="bg-earth-green-700 text-white px-4 py-2 rounded-md hover:bg-earth-green-800 cursor-pointer text-sm flex items-center gap-1"
+                        className={`px-4 py-2 rounded-md text-sm flex items-center gap-1 ${
+                          uploadingCommitmentId === commitment.id || verifyingCommitmentId === commitment.id
+                            ? 'bg-gray-400 text-white cursor-not-allowed'
+                            : 'bg-earth-green-700 text-white hover:bg-earth-green-800 cursor-pointer'
+                        }`}
                       >
                         <Upload className="h-4 w-4" />
-                        Upload Proof
+                        {uploadingCommitmentId === commitment.id ? 'Uploading...' : 'Upload Video'}
                       </label>
                       {proofFile && (
                         <button
                           onClick={() => handleProofUpload(commitment.id)}
-                          className="bg-earth-green-600 text-white px-4 py-2 rounded-md hover:bg-earth-green-700 text-sm"
+                          disabled={uploadingCommitmentId === commitment.id || verifyingCommitmentId === commitment.id}
+                          className={`px-4 py-2 rounded-md text-sm ${
+                            uploadingCommitmentId === commitment.id || verifyingCommitmentId === commitment.id
+                              ? 'bg-gray-400 text-white cursor-not-allowed'
+                              : 'bg-earth-green-600 text-white hover:bg-earth-green-700'
+                          }`}
                         >
-                          Submit
+                          {uploadingCommitmentId === commitment.id ? 'Uploading...' : 'Submit & Verify'}
+                        </button>
+                      )}
+                      {commitment.videoId && !commitment.verificationInProgress && commitment.aiVerified === undefined && (
+                        <button
+                          onClick={() => handleVerification(commitment.id)}
+                          disabled={verifyingCommitmentId === commitment.id}
+                          className={`px-4 py-2 rounded-md text-sm ${
+                            verifyingCommitmentId === commitment.id
+                              ? 'bg-gray-400 text-white cursor-not-allowed'
+                              : 'bg-blue-600 text-white hover:bg-blue-700'
+                          }`}
+                        >
+                          {verifyingCommitmentId === commitment.id ? 'Verifying...' : 'Verify Again'}
                         </button>
                       )}
                     </div>
