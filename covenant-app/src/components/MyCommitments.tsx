@@ -285,14 +285,19 @@ export function MyCommitments() {
       const verificationResult = await response.json()
       console.log('Verification result:', verificationResult)
 
+      // Validate verification result
+      if (!verificationResult || typeof verificationResult !== 'object') {
+        throw new Error('Invalid verification result format')
+      }
+
       // Update the commitment with verification results
       setCommitments(prev => prev.map(c => 
         c.id === commitmentId 
           ? { 
               ...c, 
-              aiVerified: verificationResult.verified,
-              userPresent: verificationResult.user_present,
-              comments: verificationResult.comments,
+              aiVerified: verificationResult.verified ?? false,
+              userPresent: verificationResult.user_present ?? false,
+              comments: verificationResult.comments || 'No comments',
               verificationInProgress: false,
               signature: verificationResult.signature,
               timestamp: verificationResult.timestamp

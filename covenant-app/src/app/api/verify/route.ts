@@ -73,14 +73,23 @@ export async function POST(request: NextRequest) {
             }
 
             const data = await response.json();
+            console.log('Reka API response:', JSON.stringify(data, null, 2));
 
             try {
-                const verification = JSON.parse(data["chat_response"]);
+                const chatResponse = data["chat_response"];
+                console.log('Chat response:', chatResponse);
+                
+                const verification = JSON.parse(chatResponse);
+                console.log('Parsed verification:', verification);
+                
                 return NextResponse.json(verification, { status: 200 });
-            } catch {
+            } catch (parseError) {
+                console.error('Failed to parse verification response:', parseError);
+                console.error('Raw data:', data);
+                
                 // If parsing fails, retry until attempts exhausted
                 if (attempt === maxRetries) {
-                    throw new Error('Failed to parse verification response as JSON');
+                    throw new Error(`Failed to parse verification response as JSON: ${parseError}`);
                 }
             }
         }
