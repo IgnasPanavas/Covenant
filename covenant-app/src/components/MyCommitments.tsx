@@ -204,8 +204,14 @@ export function MyCommitments() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-        console.error('Upload failed:', response.status, errorData)
-        throw new Error(`Upload failed: ${errorData.error || `HTTP ${response.status}`}`)
+        console.error('Upload failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          errorData: errorData,
+          headers: Object.fromEntries(response.headers.entries())
+        })
+        throw new Error(`Upload failed: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`)
       }
 
       const uploadResult = await response.json()
@@ -266,8 +272,14 @@ export function MyCommitments() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-        console.error('Verification failed:', response.status, errorData)
-        throw new Error(`Verification failed: ${errorData.error || `HTTP ${response.status}`}`)
+        console.error('Verification failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          errorData: errorData,
+          headers: Object.fromEntries(response.headers.entries())
+        })
+        throw new Error(`Verification failed: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`)
       }
 
       const verificationResult = await response.json()

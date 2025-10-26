@@ -6,6 +6,7 @@ import { MyCommitments } from '@/components/MyCommitments'
 import { CommitmentTester } from '@/components/CommitmentTester'
 import { DebugConfig } from '@/components/DebugConfig'
 
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-earth-green-50 to-earth-brown-50">

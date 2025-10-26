@@ -10,6 +10,13 @@ export async function POST(request: NextRequest) {
         const formData = await request.formData();
         const file = formData.get('file') as File | null;
 
+        console.log('Upload request received:', {
+            hasFile: !!file,
+            fileName: file?.name,
+            fileSize: file?.size,
+            fileType: file?.type
+        });
+
         if (!file) {
             return NextResponse.json(
                 { error: "No file uploaded. Please provide a video file." },
