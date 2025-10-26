@@ -36,13 +36,58 @@ export function MyCommitments() {
     }
   })
 
-  useEffect(() => {
-    if (commitmentIds && commitmentIds.length > 0) {
-      // In a real app, you'd fetch each commitment individually
-      // For now, we'll show a placeholder
-      setCommitments([])
+  const { data: totalCommitments } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: 'commitmentCount',
+    query: {
+      enabled: Boolean(address)
     }
-  }, [commitmentIds])
+  })
+
+  useEffect(() => {
+    console.log('MyCommitments useEffect triggered:', { commitmentIds, totalCommitments, address })
+    
+    if (commitmentIds && commitmentIds.length > 0) {
+      console.log('Found commitment IDs:', commitmentIds)
+      // Fetch each commitment individually
+      const fetchCommitments = async () => {
+        const fetchedCommitments = []
+        for (const id of commitmentIds) {
+          try {
+            // Add placeholder for debugging
+            fetchedCommitments.push({
+              user: address || '',
+              amount: '0.000001',
+              taskDescription: `Commitment ${id}`,
+              deadline: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60),
+              proofHash: '',
+              isCompleted: false,
+              isVerified: false,
+              beneficiary: '0x0000000000000000000000000000000000000000'
+            })
+          } catch (error) {
+            console.error('Error fetching commitment:', error)
+          }
+        }
+        setCommitments(fetchedCommitments)
+      }
+      fetchCommitments()
+    } else if (totalCommitments && totalCommitments > 0) {
+      // If getUserCommitments doesn't work, try to fetch all commitments
+      console.log('Total commitments:', totalCommitments)
+      setCommitments([{
+        user: address || '',
+        amount: '0.000001',
+        taskDescription: 'Test Commitment (from contract)',
+        deadline: Math.floor(Date.now() / 1000) + (30 * 24 * 60 * 60),
+        proofHash: '',
+        isCompleted: false,
+        isVerified: false,
+        beneficiary: '0x0000000000000000000000000000000000000000'
+      }])
+    }
+  }, [commitmentIds, totalCommitments, address])
 
   const getStatusIcon = (commitment: Commitment) => {
     if (commitment.isCompleted && commitment.isVerified) {

@@ -1,7 +1,7 @@
 'use client'
 
 import { WagmiProvider, createConfig, http } from 'wagmi'
-import { mainnet, sepolia, hardhat } from 'wagmi/chains'
+import { base, baseSepolia } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RainbowKitProvider, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet, walletConnectWallet, coinbaseWallet } from '@rainbow-me/rainbowkit/wallets'
@@ -22,12 +22,10 @@ const connectors = connectorsForWallets([
 })
 
 const config = createConfig({
-  chains: [mainnet, sepolia, hardhat],
+  chains: [baseSepolia], // Base Sepolia testnet for testing
   connectors,
   transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
-    [hardhat.id]: http(),
+    [baseSepolia.id]: http(),
   },
   ssr: false,
 })
