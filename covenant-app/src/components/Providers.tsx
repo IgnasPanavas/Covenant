@@ -4,19 +4,16 @@ import React from 'react'
 import { WagmiProvider, createConfig, http } from 'wagmi'
 import { baseSepolia } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { injected, metaMask } from 'wagmi/connectors'
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit'
+import '@rainbow-me/rainbowkit/styles.css'
 
-const connectors = [
-  injected(),
-  metaMask(),
-  // Temporarily disable WalletConnect to avoid relayer issues
-  // walletConnect({
-  //   projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'demo',
-  // }),
-]
+const { connectors } = getDefaultWallets({
+  appName: 'Covenant',
+  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'demo',
+})
 
 const config = createConfig({
-  chains: [baseSepolia], // Base Sepolia testnet for testing
+  chains: [baseSepolia],
   connectors,
   transports: {
     [baseSepolia.id]: http('https://base-sepolia.public.blastapi.io', {
@@ -71,7 +68,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        <RainbowKitProvider>
+          {children}
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   )
