@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 const REKA_BASE_URL = process.env.REKA_BASE_URL!;
 const REKA_API_KEY = process.env.REKA_API_KEY!;
 
