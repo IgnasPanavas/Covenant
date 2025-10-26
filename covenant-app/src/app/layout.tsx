@@ -5,6 +5,7 @@ import { Providers } from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = {
   title: "Covenant - Accountability Platform",
   description: "Decentralized accountability system using smart contracts",
