@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 const REKA_BASE_URL = process.env.REKA_BASE_URL!;
 const REKA_API_KEY = process.env.REKA_API_KEY!;
 
 export async function POST(request: NextRequest) {
+    // Check environment variables first
+    if (!REKA_BASE_URL || !REKA_API_KEY) {
+        console.error('Missing environment variables:', { REKA_BASE_URL: !!REKA_BASE_URL, REKA_API_KEY: !!REKA_API_KEY });
+        return NextResponse.json(
+            { 
+                verified: false,
+                user_present: false,
+                comments: "Server configuration error: Missing Reka API credentials" 
+            },
+            { status: 500 }
+        );
+    }
+
     /*
      * Using try-catch here is essential for several reasons:
      * 1. Network reliability: External API calls can fail due to network issues, timeouts, or service unavailability
