@@ -1,8 +1,29 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  turbopack: {},
-  serverExternalPackages: ['@rainbow-me/rainbowkit'],
+  serverExternalPackages: ['@rainbow-me/rainbowkit', '@vanilla-extract/sprinkles'],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+  webpack: (config, { isServer }) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    }
+    
+    // Handle vanilla-extract module resolution
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+      }
+    }
+    
+    return config
+  },
   async headers() {
     return [
       {

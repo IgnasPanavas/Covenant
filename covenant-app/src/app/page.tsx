@@ -4,6 +4,7 @@ import { HowItWorks } from '@/components/HowItWorks'
 import { CreateCommitment } from '@/components/CreateCommitment'
 import { MyCommitments } from '@/components/MyCommitments'
 
+export const dynamic = 'force-dynamic'
 
 export default function Home() {
   return (
