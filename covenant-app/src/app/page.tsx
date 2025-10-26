@@ -3,8 +3,6 @@ import { Hero } from '@/components/Hero'
 import { HowItWorks } from '@/components/HowItWorks'
 import { CreateCommitment } from '@/components/CreateCommitment'
 import { MyCommitments } from '@/components/MyCommitments'
-import { CommitmentTester } from '@/components/CommitmentTester'
-import { DebugConfig } from '@/components/DebugConfig'
 
 
 export default function Home() {
@@ -14,9 +12,7 @@ export default function Home() {
       <Hero />
       <HowItWorks />
       <CreateCommitment />
-      <CommitmentTester />
       <MyCommitments />
-      <DebugConfig />
     </main>
   )
 }

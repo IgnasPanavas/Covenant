@@ -48,11 +48,6 @@ export function MyCommitments() {
     }
   })
 
-  console.log('getUserCommitments debug:')
-  console.log('- commitmentIds:', commitmentIds)
-  console.log('- commitmentIdsError:', commitmentIdsError)
-  console.log('- loadingIds:', loadingIds)
-
   const { data: totalCommitments, error: totalCommitmentsError } = useReadContract({
     address: CONTRACT_ADDRESS as `0x${string}`,
     abi: CONTRACT_ABI as any,
@@ -61,10 +56,6 @@ export function MyCommitments() {
       enabled: Boolean(address)
     }
   })
-
-  console.log('commitmentCount debug:')
-  console.log('- totalCommitments:', totalCommitments)
-  console.log('- totalCommitmentsError:', totalCommitmentsError)
 
   // Fetch all commitments for the user
   const contracts = Array.isArray(commitmentIds) && commitmentIds.length > 0 
@@ -76,9 +67,6 @@ export function MyCommitments() {
       }))
     : []
 
-  console.log('useReadContracts contracts:', contracts)
-  console.log('CONTRACT_ADDRESS:', CONTRACT_ADDRESS)
-
   const { data: allCommitmentsData, isLoading: loadingCommitments } = useReadContracts({
     contracts,
     query: {
@@ -86,18 +74,8 @@ export function MyCommitments() {
     },
   })
 
-  console.log('Debug Info:')
-  console.log('- Address:', address)
-  console.log('- Commitment IDs:', commitmentIds)
-  console.log('- All commitments data:', allCommitmentsData)
-  console.log('- Loading commitments:', loadingCommitments)
-
   useEffect(() => {
-    console.log('Processing commitments data:', allCommitmentsData)
-    console.log('Commitment IDs:', commitmentIds)
-    
     if (!allCommitmentsData || !Array.isArray(commitmentIds) || commitmentIds.length === 0) {
-      console.log('No commitments data or no commitment IDs')
       setCommitments([])
       return
     }
@@ -105,22 +83,9 @@ export function MyCommitments() {
     const fetchedCommitments: Commitment[] = []
     
     allCommitmentsData.forEach((commitmentData, index) => {
-      console.log(`Processing commitment ${index}:`, commitmentData)
-      console.log(`Commitment data status:`, commitmentData.status)
-      console.log(`Commitment data result:`, commitmentData.result)
-      console.log(`Commitment data error:`, commitmentData.error)
-      
       if (commitmentData.status === 'success' && commitmentData.result) {
         const data = commitmentData.result as any
         const commitmentId = Number(commitmentIds[index])
-        
-        console.log(`Successfully fetched commitment ${commitmentId}:`, data)
-        console.log(`Description from contract:`, data.description)
-        console.log(`Description type:`, typeof data.description)
-        console.log(`All data keys:`, Object.keys(data))
-        console.log(`Data description directly:`, data.description)
-        console.log(`Data description with bracket notation:`, data['description'])
-        console.log(`Full result object:`, commitmentData.result)
         
         // Map the data according to the deployed contract structure:
         // user, description, deadline, beneficiary, stakeAmount, token, status, proofHash, verified, verificationReason
@@ -138,21 +103,10 @@ export function MyCommitments() {
           status: Number(data.status || 0), // Add the actual status from contract
         }
         
-        console.log(`Mapped commitment:`, commitment)
-        console.log(`Mapped commitment taskDescription:`, commitment.taskDescription)
-        console.log(`Mapped commitment taskDescription length:`, commitment.taskDescription?.length)
-        console.log(`Mapped commitment status:`, commitment.status)
-        console.log(`Original data status:`, data.status)
-        
         fetchedCommitments.push(commitment)
-      } else {
-        console.log(`Failed to fetch commitment ${index}:`, commitmentData)
-        console.log(`Error details:`, commitmentData.error)
       }
     })
     
-    console.log('Final fetched commitments:', fetchedCommitments)
-    console.log('Final commitments taskDescriptions:', fetchedCommitments.map(c => c.taskDescription))
     setCommitments(fetchedCommitments)
   }, [allCommitmentsData, commitmentIds])
 
@@ -204,18 +158,10 @@ export function MyCommitments() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-        console.error('Upload failed:', {
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url,
-          errorData: errorData,
-          headers: Object.fromEntries(response.headers.entries())
-        })
         throw new Error(`Upload failed: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`)
       }
 
       const uploadResult = await response.json()
-      console.log('Upload successful:', uploadResult)
 
       // Update the commitment with the video ID
       setCommitments(prev => prev.map(commitment => 
@@ -230,7 +176,6 @@ export function MyCommitments() {
       }
 
     } catch (error) {
-      console.error('Upload error:', error)
       alert('Failed to upload video. Please try again.')
     } finally {
       setUploadingCommitmentId(null)
@@ -272,18 +217,10 @@ export function MyCommitments() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-        console.error('Verification failed:', {
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url,
-          errorData: errorData,
-          headers: Object.fromEntries(response.headers.entries())
-        })
         throw new Error(`Verification failed: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`)
       }
 
       const verificationResult = await response.json()
-      console.log('Verification result:', verificationResult)
 
       
       if (!verificationResult || typeof verificationResult !== 'object') {
@@ -306,7 +243,6 @@ export function MyCommitments() {
       ))
 
     } catch (error) {
-      console.error('Verification error:', error)
       alert('Failed to verify commitment. Please try again.')
       
       // Reset verification in progress state
@@ -519,13 +455,15 @@ export function MyCommitments() {
                 <div className="flex items-center justify-between pt-4 border-t border-earth-brown-200">
                   <div className="text-xs text-earth-text-light">
                     <p>Status: {
-                      commitment.isCompleted 
-                        ? (commitment.isVerified ? 'Completed & Verified' : 'Failed')
+                      commitment.status === 1
+                        ? 'Completed & Verified'
+                        : commitment.status === 2
+                        ? 'Failed'
                         : 'Active'
                     }</p>
                   </div>
                   
-                  {!commitment.isCompleted && new Date(commitment.deadline * 1000) > new Date() && (
+                  {commitment.status === 0 && new Date(commitment.deadline * 1000) > new Date() && (
                     <div className="flex space-x-2">
                       <input
                         type="file"

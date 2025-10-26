@@ -1,4 +1,5 @@
-import { createWalletClient, http, parsePrivateKey } from 'viem'
+import { createWalletClient, http } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
 import { baseSepolia } from 'viem/chains'
 
 // Sign a message with the private key from environment variables
@@ -10,10 +11,12 @@ export async function signMessage(message: string): Promise<string> {
   }
 
   try {
+    const account = privateKeyToAccount(privateKey as `0x${string}`)
+    
     const walletClient = createWalletClient({
       chain: baseSepolia,
       transport: http(),
-      account: parsePrivateKey(privateKey)
+      account
     })
 
     const signature = await walletClient.signMessage({
@@ -22,7 +25,6 @@ export async function signMessage(message: string): Promise<string> {
 
     return signature
   } catch (error) {
-    console.error('Error signing message:', error)
     throw new Error('Failed to sign message')
   }
 }
