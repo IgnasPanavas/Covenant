@@ -281,7 +281,7 @@ export function MyCommitments() {
         })
         throw new Error(`Verification failed: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`)
       }
-      console.log('Verification response:', response.text)
+
       const verificationResult = await response.json()
       console.log('Verification result:', verificationResult)
 
