@@ -56,22 +56,35 @@ export async function POST(request: NextRequest) {
             ]
         };
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': REKA_API_KEY
-            },
-            body: JSON.stringify(payload)
-        });
+        const maxRetries = 3;
 
-        if (!response.ok) {
-            throw new Error(`Reka API request failed with status: ${response.status}`);
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': REKA_API_KEY
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Reka API request failed with status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            try {
+                const verification = JSON.parse(data["chat_response"]);
+                return NextResponse.json(verification, { status: 200 });
+            } catch {
+                // If parsing fails, retry until attempts exhausted
+                if (attempt === maxRetries) {
+                    throw new Error('Failed to parse verification response as JSON');
+                }
+            }
         }
-
-        const data = await response.json();
-
-        return NextResponse.json(data, { status: 200 });    } catch (error) {
+    } catch (error) {
         console.error('Verification error:', error);
         return NextResponse.json(
             {
