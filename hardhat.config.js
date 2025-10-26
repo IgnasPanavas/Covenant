@@ -11,9 +11,15 @@ module.exports = {
       url: "http://127.0.0.1:8545",
       chainId: 1337,
     },
-    sepolia: {
-      url: process.env.SEPOLIA_URL || "",
+    baseSepolia: {
+      url: "https://sepolia.base.org",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      chainId: 84532,
+    },
+    base: {
+      url: "https://mainnet.base.org",
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      chainId: 8453,
     },
   },
   paths: {

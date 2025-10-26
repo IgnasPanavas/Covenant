@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAccount, useWriteContract } from 'wagmi'
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/lib/contract'
+import { useAccount, useWriteContract, useReadContract } from 'wagmi'
+import { CONTRACT_ADDRESS, CONTRACT_ABI, USDC_ADDRESS } from '@/lib/contract'
 
 export function CreateCommitment() {
   const { address, isConnected } = useAccount()
@@ -10,23 +10,43 @@ export function CreateCommitment() {
   const [deadline, setDeadline] = useState('')
   const [beneficiary, setBeneficiary] = useState('')
   const [stakeAmount, setStakeAmount] = useState('')
+  const [tokenType, setTokenType] = useState<'ETH' | 'USDC'>('USDC')
   const [mounted, setMounted] = useState(false)
 
-  const { writeContract, isPending } = useWriteContract()
+  const { writeContract, isPending, error } = useWriteContract()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  // Log any errors for debugging
+  useEffect(() => {
+    if (error) {
+      console.error('Contract error:', error)
+    }
+  }, [error])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (taskDescription && deadline && beneficiary && stakeAmount) {
+      const deadlineTimestamp = Math.floor(new Date(deadline).getTime() / 1000)
+      const tokenAddress = tokenType === 'ETH' ? '0x0000000000000000000000000000000000000000' : USDC_ADDRESS
+      const amount = tokenType === 'ETH' 
+        ? BigInt(Math.floor(parseFloat(stakeAmount) * 1e18))
+        : BigInt(Math.floor(parseFloat(stakeAmount) * 1e6)) // USDC has 6 decimals
+      
       writeContract({
         address: CONTRACT_ADDRESS,
         abi: CONTRACT_ABI,
         functionName: 'createCommitment',
-        args: [taskDescription, Math.floor(new Date(deadline).getTime() / 1000), beneficiary as `0x${string}`],
-        value: BigInt(Math.floor(parseFloat(stakeAmount) * 1e18))
+        args: [
+          taskDescription, 
+          deadlineTimestamp, 
+          beneficiary as `0x${string}`,
+          tokenAddress as `0x${string}`,
+          amount
+        ],
+        value: tokenType === 'ETH' ? amount : BigInt(0)
       })
     }
   }
@@ -90,18 +110,54 @@ export function CreateCommitment() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Stake Amount (ETH)
+              Token Type
+            </label>
+            <div className="flex space-x-4 mb-4">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="tokenType"
+                  value="USDC"
+                  checked={tokenType === 'USDC'}
+                  onChange={(e) => setTokenType(e.target.value as 'ETH' | 'USDC')}
+                  className="mr-2"
+                />
+                <span className="text-sm">USDC (Recommended)</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="tokenType"
+                  value="ETH"
+                  checked={tokenType === 'ETH'}
+                  onChange={(e) => setTokenType(e.target.value as 'ETH' | 'USDC')}
+                  className="mr-2"
+                />
+                <span className="text-sm">ETH</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Stake Amount ({tokenType})
             </label>
             <input
               type="number"
-              step="0.01"
-              min="0.01"
+              step="0.000001"
+              min="0.000001"
               value={stakeAmount}
               onChange={(e) => setStakeAmount(e.target.value)}
-              placeholder="0.1"
+              placeholder={tokenType === 'USDC' ? "1" : "0.000001"}
               className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
+            <p className="text-sm text-gray-500 mt-1">
+              {tokenType === 'USDC' 
+                ? 'USDC is stable at $1.00 - you know exactly what you\'re staking! (Min: 0.000001 USDC)'
+                : 'ETH value fluctuates - check current price before staking (Min: 0.000001 ETH)'
+              }
+            </p>
           </div>
 
           <div>
@@ -120,6 +176,13 @@ export function CreateCommitment() {
               This could be a charity, friend, or any Ethereum address
             </p>
           </div>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4">
+              <p className="font-medium">Error creating commitment:</p>
+              <p className="text-sm">{error.message}</p>
+            </div>
+          )}
 
           <button
             type="submit"
