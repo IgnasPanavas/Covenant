@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+const { ethers } = require("hardhat");
 
 async function main() {
   console.log("🚀 Starting deployment to Base Sepolia...");
@@ -19,9 +19,9 @@ async function main() {
   const accountabilityContract = await AccountabilityContract.deploy(USDC_ADDRESS);
   
   // Wait for deployment to complete
-  await accountabilityContract.waitForDeployment();
+  await accountabilityContract.deployed();
   
-  const contractAddress = await accountabilityContract.getAddress();
+  const contractAddress = accountabilityContract.address;
   
   console.log("\n✅ Deployment successful!");
   console.log("📍 Contract Address:", contractAddress);
@@ -40,7 +40,7 @@ async function main() {
     console.log("✅ Next Commitment ID:", nextCommitmentId.toString());
     
     console.log("\n🎉 Contract is working correctly!");
-  } catch (error: any) {
+  } catch (error) {
     console.error("❌ Error verifying contract:", error.message);
   }
   
@@ -50,7 +50,7 @@ async function main() {
     contractAddress: contractAddress,
     usdcAddress: USDC_ADDRESS,
     deploymentTime: new Date().toISOString(),
-    deployer: await accountabilityContract.runner?.address
+    deployer: await accountabilityContract.signer.getAddress()
   };
   
   console.log("\n📄 Deployment Summary:");

@@ -3,14 +3,16 @@ import { Hero } from '@/components/Hero'
 import { HowItWorks } from '@/components/HowItWorks'
 import { CreateCommitment } from '@/components/CreateCommitment'
 import { MyCommitments } from '@/components/MyCommitments'
+import { CommitmentTester } from '@/components/CommitmentTester'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <main className="min-h-screen bg-gradient-to-br from-earth-green-50 to-earth-brown-50">
       <Header />
       <Hero />
       <HowItWorks />
       <CreateCommitment />
+      <CommitmentTester />
       <MyCommitments />
     </main>
   )

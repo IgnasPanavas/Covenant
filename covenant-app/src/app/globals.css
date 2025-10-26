@@ -1,26 +1,94 @@
 @import "tailwindcss";
 
+/* Earth-themed color palette */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Dark Green variations */
+  --earth-green-50: #f0f5f2;
+  --earth-green-100: #d9e8de;
+  --earth-green-200: #b8d3c4;
+  --earth-green-300: #8eb5a2;
+  --earth-green-400: #5d917a;
+  --earth-green-500: #427761;
+  --earth-green-600: #33604d;
+  --earth-green-700: #2a4d3e;
+  --earth-green-800: #253f34;
+  --earth-green-900: #1f352d;
+  --earth-green-950: #0f1a15;
+
+  /* Brown variations */
+  --earth-brown-50: #faf6f3;
+  --earth-brown-100: #f4ebe2;
+  --earth-brown-200: #e8d5c4;
+  --earth-brown-300: #d8b99f;
+  --earth-brown-400: #c49676;
+  --earth-brown-500: #b47a58;
+  --earth-brown-600: #a56547;
+  --earth-brown-700: #88503d;
+  --earth-brown-800: #6f4338;
+  --earth-brown-900: #5d3730;
+  --earth-brown-950: #321d1a;
+
+  /* Accent colors */
+  --earth-accent-light: #a8c698;
+  --earth-accent: #7da167;
+  --earth-accent-dark: #5c7d4a;
+  
+  /* Neutral backgrounds */
+  --earth-bg-light: #f8f7f4;
+  --earth-bg: #f0ede7;
+  --earth-bg-dark: #e8e4dc;
+  
+  /* Text colors */
+  --earth-text-light: #73726e;
+  --earth-text: #3d3d3a;
+  --earth-text-dark: #1f1f1d;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Green color scale */
+  --color-earth-green-50: var(--earth-green-50);
+  --color-earth-green-100: var(--earth-green-100);
+  --color-earth-green-200: var(--earth-green-200);
+  --color-earth-green-300: var(--earth-green-300);
+  --color-earth-green-400: var(--earth-green-400);
+  --color-earth-green-500: var(--earth-green-500);
+  --color-earth-green-600: var(--earth-green-600);
+  --color-earth-green-700: var(--earth-green-700);
+  --color-earth-green-800: var(--earth-green-800);
+  --color-earth-green-900: var(--earth-green-900);
+  --color-earth-green-950: var(--earth-green-950);
+  
+  /* Brown color scale */
+  --color-earth-brown-50: var(--earth-brown-50);
+  --color-earth-brown-100: var(--earth-brown-100);
+  --color-earth-brown-200: var(--earth-brown-200);
+  --color-earth-brown-300: var(--earth-brown-300);
+  --color-earth-brown-400: var(--earth-brown-400);
+  --color-earth-brown-500: var(--earth-brown-500);
+  --color-earth-brown-600: var(--earth-brown-600);
+  --color-earth-brown-700: var(--earth-brown-700);
+  --color-earth-brown-800: var(--earth-brown-800);
+  --color-earth-brown-900: var(--earth-brown-900);
+  --color-earth-brown-950: var(--earth-brown-950);
+  
+  /* Accent colors */
+  --color-earth-accent-light: var(--earth-accent-light);
+  --color-earth-accent: var(--earth-accent);
+  --color-earth-accent-dark: var(--earth-accent-dark);
+  
+  /* Background colors */
+  --color-earth-bg-light: var(--earth-bg-light);
+  --color-earth-bg: var(--earth-bg);
+  --color-earth-bg-dark: var(--earth-bg-dark);
+  
+  /* Text colors */
+  --color-earth-text-light: var(--earth-text-light);
+  --color-earth-text: var(--earth-text);
+  --color-earth-text-dark: var(--earth-text-dark);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--earth-bg-light);
+  color: var(--earth-text-dark);
   font-family: Arial, Helvetica, sans-serif;
 }

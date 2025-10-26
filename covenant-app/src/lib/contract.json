@@ -1,6 +1,6 @@
 {
-  "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-  "usdcAddress": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+  "address": "0x30BA856992398382ad020740c6B59f3E78Da7a3E",
+  "usdcAddress": "0x0000000000000000000000000000000000000000",
   "abi": [
     {
       "inputs": [
@@ -23,66 +23,10 @@
           "type": "uint256"
         },
         {
-          "indexed": false,
-          "internalType": "bool",
-          "name": "verified",
-          "type": "bool"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "confidence",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "reasoning",
-          "type": "string"
-        }
-      ],
-      "name": "AIVerified",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "commitmentId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "proofHash",
-          "type": "string"
-        }
-      ],
-      "name": "AutoVerificationTriggered",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "commitmentId",
-          "type": "uint256"
-        },
-        {
           "indexed": true,
           "internalType": "address",
           "name": "user",
           "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
         }
       ],
       "name": "CommitmentCompleted",
@@ -105,14 +49,8 @@
         },
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
           "internalType": "string",
-          "name": "taskDescription",
+          "name": "description",
           "type": "string"
         },
         {
@@ -120,6 +58,18 @@
           "internalType": "uint256",
           "name": "deadline",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "stakeAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
         }
       ],
       "name": "CommitmentCreated",
@@ -137,17 +87,42 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "beneficiary",
+          "name": "user",
           "type": "address"
         },
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
+          "internalType": "address",
+          "name": "beneficiary",
+          "type": "address"
         }
       ],
       "name": "CommitmentFailed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "commitmentId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "verified",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "CommitmentVerified",
       "type": "event"
     },
     {
@@ -202,88 +177,16 @@
       "type": "function"
     },
     {
-      "inputs": [
+      "inputs": [],
+      "name": "commitmentCount",
+      "outputs": [
         {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "name": "aiReasoning",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "aiVerified",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "autoVerificationEnabled",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_commitmentId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bool",
-          "name": "_verified",
-          "type": "bool"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_confidence",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "_reasoning",
-          "type": "string"
-        }
-      ],
-      "name": "autoVerifyCommitment",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -302,18 +205,33 @@
           "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
           "internalType": "string",
-          "name": "taskDescription",
+          "name": "description",
           "type": "string"
         },
         {
           "internalType": "uint256",
           "name": "deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "beneficiary",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "stakeAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "status",
           "type": "uint256"
         },
         {
@@ -323,23 +241,13 @@
         },
         {
           "internalType": "bool",
-          "name": "isCompleted",
+          "name": "verified",
           "type": "bool"
         },
         {
-          "internalType": "bool",
-          "name": "isVerified",
-          "type": "bool"
-        },
-        {
-          "internalType": "address",
-          "name": "beneficiary",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
+          "internalType": "string",
+          "name": "verificationReason",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
@@ -349,7 +257,7 @@
       "inputs": [
         {
           "internalType": "string",
-          "name": "_taskDescription",
+          "name": "_description",
           "type": "string"
         },
         {
@@ -394,48 +302,19 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
           "internalType": "uint256",
-          "name": "_commitmentId",
+          "name": "_amount",
           "type": "uint256"
         }
       ],
-      "name": "failCommitment",
+      "name": "emergencyWithdraw",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_commitmentId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getAIVerificationData",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "verified",
-          "type": "bool"
-        },
-        {
-          "internalType": "uint256",
-          "name": "confidence",
-          "type": "uint256"
-        },
-        {
-          "internalType": "string",
-          "name": "reasoning",
-          "type": "string"
-        },
-        {
-          "internalType": "bool",
-          "name": "isAutoVerificationEnabled",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -456,18 +335,33 @@
               "type": "address"
             },
             {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
               "internalType": "string",
-              "name": "taskDescription",
+              "name": "description",
               "type": "string"
             },
             {
               "internalType": "uint256",
               "name": "deadline",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "beneficiary",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "stakeAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "status",
               "type": "uint256"
             },
             {
@@ -477,23 +371,13 @@
             },
             {
               "internalType": "bool",
-              "name": "isCompleted",
+              "name": "verified",
               "type": "bool"
             },
             {
-              "internalType": "bool",
-              "name": "isVerified",
-              "type": "bool"
-            },
-            {
-              "internalType": "address",
-              "name": "beneficiary",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "token",
-              "type": "address"
+              "internalType": "string",
+              "name": "verificationReason",
+              "type": "string"
             }
           ],
           "internalType": "struct AccountabilityContract.Commitment",
@@ -544,32 +428,6 @@
     },
     {
       "inputs": [],
-      "name": "minConfidenceThreshold",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "nextCommitmentId",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "owner",
       "outputs": [
         {
@@ -604,56 +462,12 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "_commitmentId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bool",
-          "name": "_enabled",
-          "type": "bool"
-        }
-      ],
-      "name": "setAutoVerificationEnabled",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "_token",
           "type": "address"
         }
       ],
       "name": "setDefaultToken",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_newThreshold",
-          "type": "uint256"
-        }
-      ],
-      "name": "setMinConfidenceThreshold",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_newPeriod",
-          "type": "uint256"
-        }
-      ],
-      "name": "setVerificationPeriod",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -696,6 +510,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "totalStaked",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -704,19 +531,6 @@
         }
       ],
       "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_commitmentId",
-          "type": "uint256"
-        }
-      ],
-      "name": "triggerAIVerification",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -749,40 +563,18 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "verificationConfidence",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "verificationPeriod",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
           "name": "_commitmentId",
           "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "_verified",
+          "type": "bool"
+        },
+        {
+          "internalType": "string",
+          "name": "_reason",
+          "type": "string"
         }
       ],
       "name": "verifyCommitment",

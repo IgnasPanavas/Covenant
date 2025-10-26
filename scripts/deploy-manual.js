@@ -1,24 +1,32 @@
-import { ethers } from "hardhat";
+require('dotenv').config();
+const { ethers } = require("hardhat");
 
 async function main() {
   console.log("🚀 Starting deployment to Base Sepolia...");
 
+  // Check if private key is available
+  if (!process.env.PRIVATE_KEY) {
+    throw new Error("PRIVATE_KEY not found in environment variables");
+  }
+
+  // Create a provider and wallet manually
+  const provider = new ethers.JsonRpcProvider("https://sepolia.base.org");
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+  
+  console.log("Deploying contracts with the account:", wallet.address);
+  console.log("Account balance:", (await provider.getBalance(wallet.address)).toString());
+
+  // Base Sepolia USDC address
+  const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
+  
   // Get the contract factory
   const AccountabilityContract = await ethers.getContractFactory("AccountabilityContract");
   
-  // Base Sepolia USDC address (for testing)
-  const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
-  
-  console.log("📋 Contract details:");
-  console.log("- Contract: AccountabilityContract");
-  console.log("- Default Token (USDC):", USDC_ADDRESS);
-  console.log("- Network: Base Sepolia");
+  console.log("\n⏳ Deploying AccountabilityContract...");
+  console.log("Default Token (USDC):", USDC_ADDRESS);
   
   // Deploy the contract
-  console.log("\n⏳ Deploying contract...");
-  const accountabilityContract = await AccountabilityContract.deploy(USDC_ADDRESS);
-  
-  // Wait for deployment to complete
+  const accountabilityContract = await AccountabilityContract.connect(wallet).deploy(USDC_ADDRESS);
   await accountabilityContract.waitForDeployment();
   
   const contractAddress = await accountabilityContract.getAddress();
@@ -40,27 +48,14 @@ async function main() {
     console.log("✅ Next Commitment ID:", nextCommitmentId.toString());
     
     console.log("\n🎉 Contract is working correctly!");
-  } catch (error: any) {
+  } catch (error) {
     console.error("❌ Error verifying contract:", error.message);
   }
-  
-  // Save deployment info
-  const deploymentInfo = {
-    network: "baseSepolia",
-    contractAddress: contractAddress,
-    usdcAddress: USDC_ADDRESS,
-    deploymentTime: new Date().toISOString(),
-    deployer: await accountabilityContract.runner?.address
-  };
-  
-  console.log("\n📄 Deployment Summary:");
-  console.log(JSON.stringify(deploymentInfo, null, 2));
   
   console.log("\n🔧 Next steps:");
   console.log("1. Update your contract.ts file with the new address:");
   console.log(`   export const CONTRACT_ADDRESS = '${contractAddress}' as const`);
-  console.log("2. Update your contract.json file with the new ABI if needed");
-  console.log("3. Test your frontend with the new contract address");
+  console.log("2. Test your frontend with the new contract address");
 }
 
 main()

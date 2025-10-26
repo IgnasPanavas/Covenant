@@ -34,38 +34,38 @@ export function HowItWorks() {
   ]
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-earth-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-16">
+        <h2 className="text-3xl font-bold text-center text-earth-green-900 mb-16">
           How It Works
         </h2>
         
         <div className="space-y-4">
           {steps.map((step) => (
-            <div key={step.number} className="bg-gray-50 rounded-lg p-6">
+            <div key={step.number} className="bg-earth-brown-50 rounded-lg p-6 border border-earth-brown-200">
               <button
                 onClick={() => setExpandedStep(expandedStep === step.number ? null : step.number)}
                 className="w-full flex items-center justify-between text-left"
               >
                 <div className="flex items-center space-x-4">
-                  <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                  <div className="bg-earth-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
                     {step.number}
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{step.title}</h3>
-                    <p className="text-gray-600">{step.description}</p>
+                    <h3 className="text-lg font-semibold text-earth-green-900">{step.title}</h3>
+                    <p className="text-earth-text-light">{step.description}</p>
                   </div>
                 </div>
                 {expandedStep === step.number ? (
-                  <ChevronUp className="h-5 w-5 text-gray-400" />
+                  <ChevronUp className="h-5 w-5 text-earth-green-600" />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                  <ChevronDown className="h-5 w-5 text-earth-green-600" />
                 )}
               </button>
               
               {expandedStep === step.number && (
                 <div className="mt-4 pl-12">
-                  <p className="text-gray-700">{step.details}</p>
+                  <p className="text-earth-text">{step.details}</p>
                 </div>
               )}
             </div>

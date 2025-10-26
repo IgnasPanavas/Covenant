@@ -1,7 +1,7 @@
 // Contract configuration for AccountabilityContract
 // Localhost (testing)
-export const CONTRACT_ADDRESS = '0xa82fb268b257E21Dae90789A96Be8fB6F640e783' as const
-export const USDC_ADDRESS = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as const
+export const CONTRACT_ADDRESS = '0x30BA856992398382ad020740c6B59f3E78Da7a3E' as const
+export const USDC_ADDRESS = '0x0000000000000000000000000000000000000000' as const // ETH
 
 // Base Mainnet (production) - Update these when deploying to Base
 // export const CONTRACT_ADDRESS = '0x...' as const

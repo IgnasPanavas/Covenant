@@ -53,10 +53,10 @@ export function CreateCommitment() {
 
   if (!mounted) {
     return (
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-earth-bg-dark">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Create Your Commitment</h2>
-          <p className="text-gray-600">Loading...</p>
+          <h2 className="text-3xl font-bold text-earth-green-900 mb-4">Create Your Commitment</h2>
+          <p className="text-earth-text-light">Loading...</p>
         </div>
       </section>
     )
@@ -64,52 +64,52 @@ export function CreateCommitment() {
 
   if (!isConnected) {
     return (
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-earth-bg-dark">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Create Your Commitment</h2>
-          <p className="text-gray-600">Connect your wallet to create a new commitment</p>
+          <h2 className="text-3xl font-bold text-earth-green-900 mb-4">Create Your Commitment</h2>
+          <p className="text-earth-text-light">Connect your wallet to create a new commitment</p>
         </div>
       </section>
     )
   }
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-earth-bg-dark">
       <div className="max-w-2xl mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+        <h2 className="text-3xl font-bold text-center text-earth-green-900 mb-8">
           Create Your Commitment
         </h2>
         
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md space-y-6">
+        <form onSubmit={handleSubmit} className="bg-earth-brown-50 p-8 rounded-lg shadow-md space-y-6 border border-earth-brown-200">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-earth-green-900 mb-2">
               What do you want to achieve?
             </label>
             <textarea
               value={taskDescription}
               onChange={(e) => setTaskDescription(e.target.value)}
               placeholder="e.g., I will run 5 miles every day for 30 days"
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-earth-brown-300 rounded-md focus:ring-2 focus:ring-earth-green-600 focus:border-transparent"
               rows={3}
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-earth-green-900 mb-2">
               Deadline
             </label>
             <input
               type="datetime-local"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-earth-brown-300 rounded-md focus:ring-2 focus:ring-earth-green-600 focus:border-transparent"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-earth-green-900 mb-2">
               Token Type
             </label>
             <div className="flex space-x-4 mb-4">
@@ -122,7 +122,7 @@ export function CreateCommitment() {
                   onChange={(e) => setTokenType(e.target.value as 'ETH' | 'USDC')}
                   className="mr-2"
                 />
-                <span className="text-sm">USDC (Recommended)</span>
+                <span className="text-sm text-earth-text">USDC (Recommended)</span>
               </label>
               <label className="flex items-center">
                 <input
@@ -133,13 +133,13 @@ export function CreateCommitment() {
                   onChange={(e) => setTokenType(e.target.value as 'ETH' | 'USDC')}
                   className="mr-2"
                 />
-                <span className="text-sm">ETH</span>
+                <span className="text-sm text-earth-text">ETH</span>
               </label>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-earth-green-900 mb-2">
               Stake Amount ({tokenType})
             </label>
             <input
@@ -149,10 +149,10 @@ export function CreateCommitment() {
               value={stakeAmount}
               onChange={(e) => setStakeAmount(e.target.value)}
               placeholder={tokenType === 'USDC' ? "1" : "0.000001"}
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-earth-brown-300 rounded-md focus:ring-2 focus:ring-earth-green-600 focus:border-transparent"
               required
             />
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-earth-text-light mt-1">
               {tokenType === 'USDC' 
                 ? 'USDC is stable at $1.00 - you know exactly what you\'re staking! (Min: 0.000001 USDC)'
                 : 'ETH value fluctuates - check current price before staking (Min: 0.000001 ETH)'
@@ -161,7 +161,7 @@ export function CreateCommitment() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-earth-green-900 mb-2">
               Beneficiary Address (who gets your money if you fail)
             </label>
             <input
@@ -169,10 +169,10 @@ export function CreateCommitment() {
               value={beneficiary}
               onChange={(e) => setBeneficiary(e.target.value)}
               placeholder="0x..."
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-earth-brown-300 rounded-md focus:ring-2 focus:ring-earth-green-600 focus:border-transparent"
               required
             />
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-earth-text-light mt-1">
               This could be a charity, friend, or any Ethereum address
             </p>
           </div>
@@ -187,7 +187,7 @@ export function CreateCommitment() {
           <button
             type="submit"
             disabled={isPending || !taskDescription || !deadline || !beneficiary || !stakeAmount}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-earth-green-700 text-white py-3 px-4 rounded-md hover:bg-earth-green-800 focus:ring-2 focus:ring-earth-green-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isPending ? 'Creating Commitment...' : 'Create Commitment'}
           </button>
